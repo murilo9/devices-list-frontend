@@ -3,7 +3,7 @@ import { AppBar, Box, Button, IconButton, Toolbar, Typography } from '@mui/mater
 
 export default function TopBar() {
   return <>
-    <AppBar position="static">
+    <AppBar position="fixed">
       <Toolbar>
         <Box sx={{ mr: 2 }}>
           <DevicesOther />
