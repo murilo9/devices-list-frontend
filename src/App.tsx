@@ -11,7 +11,7 @@ import Main from './pages/Main';
 import Login from './pages/Login';
 
 function App() {
-  const token = 'token';
+  const token = '';
   return <>
     <BrowserRouter>
       <Routes>
