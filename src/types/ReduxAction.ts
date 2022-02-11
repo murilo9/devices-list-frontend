@@ -1,6 +1,5 @@
 import ReduxActionType from "./ReduxActionType";
-
-type ReduxAction = {
+interface ReduxAction {
   type: ReduxActionType,
   payload: any
 }

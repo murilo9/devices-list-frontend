@@ -1,6 +1,9 @@
+import Device from "../types/Device"
+import DeviceInCart from "../types/DeviceInCart"
+
 export type AppState = {
-  stuff: string[]
+  cart: DeviceInCart[]
 }
 export default {
-  stuff: []
+  cart: []
 }
