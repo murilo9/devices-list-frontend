@@ -9,18 +9,20 @@ type DeviceItemProps = {
   description: string,
   type: DeviceType,
   index: number,
-  amountInCart: number
+  amountInCart: number,
+  onDeviceItemClick: (index: number) => void
 }
 
-export default function DeviceItem({ name, description, type, index, amountInCart }: DeviceItemProps) {
+export default function DeviceItem({ name, description, type, index, amountInCart, onDeviceItemClick }: DeviceItemProps) {
+  const handleDeviceItemClick = () => onDeviceItemClick(index)
   return <>
     {index !== 0 ? <Divider variant="inset" component="li" /> : null}
-    <ListItemButton onClick={() => console.log('clicked')}>
+    <ListItemButton onClick={handleDeviceItemClick}>
       <ListItemAvatar color="error">
         <DeviceIcon type={type} />
       </ListItemAvatar>
       <ListItemText primary={
-        <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+        <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: { xs: 1, sm: 0 } }}>
           <span>{name}</span>
           <Chip sx={{ paddingX: 1 }} size="small" label={amountInCart} color={amountInCart ? 'success' : 'default'} icon={<ShoppingCart sx={{ width: '14px' }} />}></Chip>
         </Box>

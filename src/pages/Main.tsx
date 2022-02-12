@@ -13,8 +13,12 @@ export default function Main() {
   const [loadingDevices, setLoadingDevices] = useState(true);
   const [error, setError] = useState('');
   const [showItemModal, setShowItemModal] = useState(false);
+  const [selectedDeviceIndex, setSelectedDeviceIndex] = useState(-1);
 
-  const handleItemModalOpen = () => setShowItemModal(true)
+  const handleOnDeviceItemClick = (index: number) => {
+    setSelectedDeviceIndex(index)
+    setShowItemModal(true)
+  }
 
   const loadDevices = () => {
     getDevicesList().then(result => {
@@ -23,6 +27,7 @@ export default function Main() {
         setError('There was an error while loading the devices list.');
       }
       else {
+        setSelectedDeviceIndex(0)
         setDevices(result.payload)
       }
       setLoadingDevices(false);
@@ -40,13 +45,19 @@ export default function Main() {
         {error ? <Alert color="warning">{error}</Alert> : null}
         <DevicesList loading={loadingDevices}>
           {devices.map((device, index) =>
-            <DeviceItem {...device} key={device._id} index={index} amountInCart={Math.abs(Math.floor((Math.random() * 10) - 1))} />)}
+            <DeviceItem
+              {...device}
+              key={device._id}
+              index={index}
+              amountInCart={Math.abs(Math.floor((Math.random() * 10) - 1))}
+              onDeviceItemClick={handleOnDeviceItemClick}
+            />)}
         </DevicesList>
       </Box>
-      <Button onClick={handleItemModalOpen}>Open modal</Button>
+      {`selectedDeviceIndex: ${selectedDeviceIndex}`}
       {
         devices.length ?
-          <ItemModal showItemModal={showItemModal} setShowItemModal={setShowItemModal} device={devices[0]}></ItemModal>
+          <ItemModal showItemModal={showItemModal} setShowItemModal={setShowItemModal} device={devices[selectedDeviceIndex]}></ItemModal>
           : null
       }
     </Box>
