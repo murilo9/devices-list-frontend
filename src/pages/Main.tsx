@@ -1,9 +1,10 @@
 import MenuIcon from '@mui/icons-material/Menu';
-import { Alert, Box } from '@mui/material';
+import { Alert, Box, Button, Modal } from '@mui/material';
 import react, { useEffect, useState } from 'react';
 import getDevicesList from '../api/getDevicesLIst';
 import DeviceItem from '../components/DeviceItem';
 import DevicesList from '../components/DevicesLIst';
+import ItemModal from '../components/ItemModal';
 import TopBar from '../components/TopBar';
 import Device from '../types/Device';
 
@@ -11,6 +12,9 @@ export default function Main() {
   const [devices, setDevices] = useState<Device[]>([]);
   const [loadingDevices, setLoadingDevices] = useState(true);
   const [error, setError] = useState('');
+  const [showItemModal, setShowItemModal] = useState(false);
+
+  const handleItemModalOpen = () => setShowItemModal(true)
 
   const loadDevices = () => {
     getDevicesList().then(result => {
@@ -39,6 +43,12 @@ export default function Main() {
             <DeviceItem {...device} key={device._id} index={index} amountInCart={Math.abs(Math.floor((Math.random() * 10) - 1))} />)}
         </DevicesList>
       </Box>
+      <Button onClick={handleItemModalOpen}>Open modal</Button>
+      {
+        devices.length ?
+          <ItemModal showItemModal={showItemModal} setShowItemModal={setShowItemModal} device={devices[0]}></ItemModal>
+          : null
+      }
     </Box>
   </>
 }
