@@ -12,7 +12,7 @@ export default function DevicesList({ children, loading = false }: DevicesListPr
   const skeletonLoader = [];
   for (let i = 0; i < SKELETON_COUNT; i++) {
     skeletonLoader.push(
-      <Box sx={{ display: 'flex', alignItems: 'center', paddingX: 2 }}>
+      <Box sx={{ display: 'flex', alignItems: 'center', paddingX: 2 }} key={i}>
         <Skeleton variant="circular">
           <Avatar />
         </Skeleton>
