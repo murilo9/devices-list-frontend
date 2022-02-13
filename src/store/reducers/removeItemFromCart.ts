@@ -1,14 +1,13 @@
+import { PayloadAction } from "@reduxjs/toolkit";
 import ReduxAction from "../../types/ReduxAction";
 import { AppState } from "../initialState";
 
-interface RemoveItemFromCartAction extends ReduxAction {
-  payload: {
-    itemId: string,
-    amount: number
-  }
+interface RemoveItemFromCartPayload {
+  itemId: string,
+  amount: number
 }
 
-export default function removeItemFromCart(state: AppState, action: RemoveItemFromCartAction) {
+export default function removeItemFromCart(state: AppState, action: PayloadAction<RemoveItemFromCartPayload>) {
   const { itemId, amount } = action.payload;
   // Get item index
   const index = state.cart.findIndex(device => device._id === itemId);
@@ -21,5 +20,4 @@ export default function removeItemFromCart(state: AppState, action: RemoveItemFr
       state.cart.splice(index, 1);
     }
   }
-  return state
 }

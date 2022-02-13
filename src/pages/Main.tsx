@@ -1,19 +1,25 @@
 import MenuIcon from '@mui/icons-material/Menu';
 import { Alert, Box, Button, Modal } from '@mui/material';
 import react, { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import getDevicesList from '../api/getDevicesLIst';
 import DeviceItem from '../components/DeviceItem';
 import DevicesList from '../components/DevicesLIst';
 import ItemModal from '../components/ItemModal';
 import TopBar from '../components/TopBar';
+import { AppState } from '../store/initialState';
+import { setDevicesList } from '../store/rootSlice';
 import Device from '../types/Device';
 
 export default function Main() {
-  const [devices, setDevices] = useState<Device[]>([]);
   const [loadingDevices, setLoadingDevices] = useState(true);
   const [error, setError] = useState('');
   const [showItemModal, setShowItemModal] = useState(false);
   const [selectedDeviceIndex, setSelectedDeviceIndex] = useState(-1);
+
+  const dispatch = useDispatch();
+  const devices = useSelector((state: AppState) => state.devicesList)
+  const state = useSelector((state: AppState) => state)
 
   const handleOnDeviceItemClick = (index: number) => {
     setSelectedDeviceIndex(index)
@@ -23,12 +29,12 @@ export default function Main() {
   const loadDevices = () => {
     getDevicesList().then(result => {
       if (result.failed) {
-
         setError('There was an error while loading the devices list.');
       }
       else {
+        const devices = result.payload
         setSelectedDeviceIndex(0)
-        setDevices(result.payload)
+        dispatch(setDevicesList(devices))
       }
       setLoadingDevices(false);
     })

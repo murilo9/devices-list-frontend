@@ -1,15 +1,14 @@
+import { PayloadAction } from "@reduxjs/toolkit";
 import Device from "../../types/Device";
 import ReduxAction from "../../types/ReduxAction";
 import { AppState } from "../initialState";
 
-interface AddItemToCartAction extends ReduxAction {
-  payload: {
-    item: Device,
-    amount: number
-  }
+interface AddItemToCartPayload extends ReduxAction {
+  item: Device,
+  amount: number
 }
 
-export default function addItemToCart(state: AppState, action: AddItemToCartAction) {
+export default function addItemToCart(state: AppState, action: PayloadAction<AddItemToCartPayload>) {
   const { item, amount } = action.payload;
   // Get item index
   const index = state.cart.findIndex(device => device._id === item._id);
@@ -26,5 +25,4 @@ export default function addItemToCart(state: AppState, action: AddItemToCartActi
       amount
     })
   }
-  return state
 }

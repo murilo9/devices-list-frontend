@@ -1,11 +1,11 @@
+import { PayloadAction } from "@reduxjs/toolkit";
 import ReduxAction from "../../types/ReduxAction";
 import { AppState } from "../initialState";
 
-interface ClearCartAction extends ReduxAction {
+interface ClearCartPayload {
   payload: null
 }
 
-export default function clearCart(state: AppState, action: ClearCartAction) {
+export default function clearCart(state: AppState, action: PayloadAction<ClearCartPayload>) {
   state.cart = []
-  return state;
 }
