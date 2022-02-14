@@ -1,5 +1,4 @@
 import React from 'react';
-import logo from './logo.svg';
 import './App.css';
 import {
   BrowserRouter,
@@ -9,14 +8,17 @@ import {
 } from "react-router-dom";
 import Main from './pages/Main';
 import Login from './pages/Login';
+import useAuth from './hooks/useAuth';
 
 function App() {
-  const token = 'token';
+
+  const auth = useAuth();
+
   return <>
     <BrowserRouter>
       <Routes>
         {
-          token ?
+          auth.token ?
             <>
               <Route index element={<Main />}></Route>
               <Route path="*" element={<Navigate to="/" />} />

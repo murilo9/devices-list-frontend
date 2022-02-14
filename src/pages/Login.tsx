@@ -1,9 +1,11 @@
 import { Box, Button, Card, CardContent, CardHeader, FormControl, Link, TextField } from '@mui/material';
 import react, { useState } from 'react';
 import Brand from '../components/Brand';
+import useAuth from '../hooks/useAuth';
 
 export default function Login() {
   const [showSignUpForm, setShowSignUpForm] = useState(false);
+  const auth = useAuth();
 
   const onGotoSignUpClick = (ev: any) => {
     ev.preventDefault()
@@ -13,6 +15,10 @@ export default function Login() {
   const onGotoLoginClick = (ev: any) => {
     ev.preventDefault()
     setShowSignUpForm(false)
+  }
+
+  const onLogin = () => {
+    auth.signIn({ username: '', password: '' });
   }
 
   return <>
@@ -40,7 +46,7 @@ export default function Login() {
               showSignUpForm ?
                 <Button variant="contained" disableElevation>Sign Up</Button>
                 :
-                <Button variant="contained" disableElevation>Login</Button>
+                <Button variant="contained" disableElevation onClick={onLogin}>Login</Button>
             }
           </FormControl>
           <Box sx={{ display: 'flex', justifyContent: 'center' }}>
