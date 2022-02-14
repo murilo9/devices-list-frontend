@@ -18,7 +18,9 @@ export default function Login() {
   }
 
   const onLogin = () => {
-    auth.signIn({ username: '', password: '' });
+    const username = (document.getElementById('signin-username') as HTMLInputElement)?.value
+    const password = (document.getElementById('signin-password') as HTMLInputElement)?.value
+    auth.signIn({ username, password });
   }
 
   return <>
@@ -36,8 +38,8 @@ export default function Login() {
                 </>
                 :
                 <>
-                  <TextField id="username" label="Username" variant="outlined" size="small" sx={{ mb: 2 }} />
-                  <TextField id="password" type="password" label="Password" variant="outlined" size="small" />
+                  <TextField id="signin-username" label="Username" variant="outlined" size="small" sx={{ mb: 2 }} />
+                  <TextField id="signin-password" type="password" label="Password" variant="outlined" size="small" />
                 </>
             }
           </FormControl>

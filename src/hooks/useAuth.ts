@@ -1,4 +1,6 @@
 import { useState } from "react";
+import signIn from "../requests/signIn";
+import SignUpForm from "../types/SignUpForm";
 import User from "../types/User";
 
 type SignInForm = {
@@ -6,29 +8,54 @@ type SignInForm = {
   password: string
 }
 
-type SignUpForm = {
-  username: string,
-  password: string,
-  passwordAgain: string
-}
-
 export default function useAuth() {
-  const [token, setToken] = useState(localStorage.getItem('token'));
-  const [user, setUser] = useState({} as User);
+  const token = localStorage.getItem('token')
+
+  const user = {
+    username: localStorage.getItem('username'),
+    _id: localStorage.getItem('userId')
+  }
+
+  const setToken = (token: string) => {
+    localStorage.setItem('token', token)
+  }
+
+  const clearToken = () => {
+    localStorage.setItem('token', '')
+  }
+
+  const setUser = (username: string, userId: string) => {
+    localStorage.setItem('username', username)
+    localStorage.setItem('userId', userId)
+  }
+
+  const clearUser = () => {
+    localStorage.setItem('username', '')
+    localStorage.setItem('userId', '')
+  }
 
   return {
     token,
-    signIn: ({ username, password }: SignInForm) => {
-      localStorage.setItem('token', 'token')
-      setToken('token')
-      window.location.reload()
+    user,
+    signIn: (signInForm: SignInForm) => {
+      signIn(signInForm).then(signInResult => {
+        if (signInResult.failed) {
+          // TODO deal with error
+        }
+        else {
+          const token = signInResult.payload
+          setToken(token)
+          // TODO fetch user data and call setUser()
+          window.location.reload()
+        }
+      })
     },
     signUp: ({ username, password, passwordAgain }: SignUpForm) => {
 
     },
     signOut: () => {
-      localStorage.setItem('token', '')
-      setToken('')
+      clearToken()
+      clearUser()
       window.location.reload()
     }
   }

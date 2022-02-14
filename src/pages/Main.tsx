@@ -2,7 +2,7 @@ import MenuIcon from '@mui/icons-material/Menu';
 import { Alert, Box, Button, Modal } from '@mui/material';
 import react, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import getDevicesList from '../api/getDevicesLIst';
+import getDevicesList from '../requests/getDevicesLIst';
 import DeviceItem from '../components/DeviceItem';
 import DevicesList from '../components/DevicesLIst';
 import ItemModal from '../components/ItemModal';
