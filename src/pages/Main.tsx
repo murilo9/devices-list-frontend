@@ -52,15 +52,13 @@ export default function Main() {
         <DevicesList loading={loadingDevices}>
           {devices.map((device, index) =>
             <DeviceItem
-              {...device}
+              device={device}
               key={device._id}
               index={index}
-              amountInCart={Math.abs(Math.floor((Math.random() * 10) - 1))}
               onDeviceItemClick={handleOnDeviceItemClick}
             />)}
         </DevicesList>
       </Box>
-      {`selectedDeviceIndex: ${selectedDeviceIndex}`}
       {
         devices.length ?
           <ItemModal showItemModal={showItemModal} setShowItemModal={setShowItemModal} device={devices[selectedDeviceIndex]}></ItemModal>

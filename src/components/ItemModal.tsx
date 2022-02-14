@@ -1,7 +1,11 @@
 import { Box, Button, Card, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Divider, Grid, IconButton, TextField, Typography } from '@mui/material';
-import react, { useState } from 'react';
+import react, { ChangeEvent, useState } from 'react';
 import Device from '../types/Device';
 import CloseIcon from '@mui/icons-material/Close';
+import { AppState } from '../store/initialState';
+import { useDispatch, useSelector } from 'react-redux';
+import { addItemToCart, removeItemFromCart } from '../store/rootSlice';
+import useTotalItemsInCart from '../hooks/useTotalItemsInCart';
 
 type ItemModalProps = {
   showItemModal: boolean,
@@ -10,7 +14,32 @@ type ItemModalProps = {
 }
 
 export default function ItemModal({ showItemModal, device, setShowItemModal }: ItemModalProps) {
+  const dispatch = useDispatch();
+
+  const [amount, setAmount] = useState(0);
+  const [error, setError] = useState('');
+
+  const onAmountChange = (event: ChangeEvent<HTMLInputElement>) => {
+    const numberValue = Number(event.currentTarget.value)
+    if (isNaN(numberValue)) {
+      setError('Must input a valid amount')
+    }
+    else {
+      setError('')
+      setAmount(numberValue)
+    }
+  }
+
   const handleItemModalClose = () => setShowItemModal(false)
+  const handleAddItemToCart = () => {
+    dispatch(addItemToCart({ item: device, amount }))
+  }
+  const handleRemoveItemFromCart = () => {
+    const itemId = device._id
+    dispatch(removeItemFromCart({ itemId, amount }))
+  }
+
+  const totalItemsInCart = useTotalItemsInCart(device._id)
 
   return <>
     <Dialog
@@ -40,13 +69,16 @@ export default function ItemModal({ showItemModal, device, setShowItemModal }: I
           </Grid>
           <Divider orientation="vertical" flexItem sx={{ mx: 2, display: { xs: 'none', sm: 'initial' } }}></Divider>
           <Grid item xs={12} sm={4} sx={{ mt: { xs: 3, sm: 0 } }}>
-            <TextField size="small" label="Amount" sx={{ mb: 1, width: 1 }} />
-            <Button fullWidth sx={{ mb: 1 }} variant="outlined">
+            <TextField size="small" label="Amount" sx={{ mb: 1, width: 1 }} value={amount} onChange={onAmountChange} error={!!error} helperText={error} />
+            <Button fullWidth sx={{ mb: 1 }} variant="outlined" onClick={handleAddItemToCart}>
               Add to cart
               </Button>
-            <Button color="warning" fullWidth variant="outlined">
+            <Button color="warning" fullWidth variant="outlined" onClick={handleRemoveItemFromCart}>
               Remove from cart
-              </Button>
+            </Button>
+            <Typography variant="body1" sx={{ mt: 2 }}>
+              This item in cart: {totalItemsInCart}
+            </Typography>
           </Grid>
         </Grid>
       </DialogContent>

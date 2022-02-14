@@ -1,33 +1,30 @@
-import { DesktopWindows, DeviceHub, Laptop, PhoneAndroid, Print, ShoppingCart, TabletAndroid, Watch } from '@mui/icons-material';
-import { Avatar, Box, Chip, Divider, ListItem, ListItemAvatar, ListItemButton, ListItemText } from '@mui/material';
+import { Box, Divider, ListItemAvatar, ListItemButton, ListItemText } from '@mui/material';
 import react from 'react';
-import DeviceType from '../types/DeviceType';
+import Device from '../types/Device';
 import DeviceIcon from './DeviceIcon';
+import TotalInCart from './TotalInCart';
 
 type DeviceItemProps = {
-  name: string,
-  description: string,
-  type: DeviceType,
+  device: Device,
   index: number,
-  amountInCart: number,
   onDeviceItemClick: (index: number) => void
 }
 
-export default function DeviceItem({ name, description, type, index, amountInCart, onDeviceItemClick }: DeviceItemProps) {
+export default function DeviceItem({ device, index, onDeviceItemClick }: DeviceItemProps) {
   const handleDeviceItemClick = () => onDeviceItemClick(index)
   return <>
     {index !== 0 ? <Divider variant="inset" component="li" /> : null}
     <ListItemButton onClick={handleDeviceItemClick}>
       <ListItemAvatar color="error">
-        <DeviceIcon type={type} />
+        <DeviceIcon type={device.type} />
       </ListItemAvatar>
       <ListItemText primary={
         <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: { xs: 1, sm: 0 } }}>
-          <span>{name}</span>
-          <Chip sx={{ paddingX: 1 }} size="small" label={amountInCart} color={amountInCart ? 'success' : 'default'} icon={<ShoppingCart sx={{ width: '14px' }} />}></Chip>
+          <span>{device.name}</span>
+          <TotalInCart deviceId={device._id} />
         </Box>
       }
-        secondary={description} />
+        secondary={device.description} />
     </ListItemButton>
   </>
 }

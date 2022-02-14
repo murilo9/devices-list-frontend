@@ -3,7 +3,7 @@ import Device from "../../types/Device";
 import ReduxAction from "../../types/ReduxAction";
 import { AppState } from "../initialState";
 
-interface AddItemToCartPayload extends ReduxAction {
+interface AddItemToCartPayload {
   item: Device,
   amount: number
 }
