@@ -30,7 +30,10 @@ export default function ItemModal({ showItemModal, device, setShowItemModal }: I
     }
   }
 
-  const handleItemModalClose = () => setShowItemModal(false)
+  const handleItemModalClose = () => {
+    setShowItemModal(false)
+    setAmount(0)
+  }
   const handleAddItemToCart = () => {
     dispatch(addItemToCart({ item: device, amount }))
   }
