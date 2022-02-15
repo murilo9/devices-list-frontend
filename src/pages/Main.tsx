@@ -27,17 +27,17 @@ export default function Main() {
   }
 
   const loadDevices = () => {
-    getDevicesList().then(result => {
-      if (result.failed) {
-        setError('There was an error while loading the devices list.');
-      }
-      else {
-        const devices = result.payload
-        setSelectedDeviceIndex(0)
-        dispatch(setDevicesList(devices))
-      }
-      setLoadingDevices(false);
+    getDevicesList().then(response => {
+      const devices = response
+      setSelectedDeviceIndex(0)
+      dispatch(setDevicesList(devices))
     })
+      .catch(error => {
+        setError('There was an error while loading the devices list. Ensure the server is up.');
+      })
+      .finally(() => {
+        setLoadingDevices(false);
+      })
   }
 
   useEffect(() => {

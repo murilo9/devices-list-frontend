@@ -1,10 +1,11 @@
-import { Box, Button, Card, CardContent, CardHeader, FormControl, Link, TextField } from '@mui/material';
+import { Alert, Box, Button, Card, CardContent, CardHeader, FormControl, Link, TextField } from '@mui/material';
 import react, { useState } from 'react';
 import Brand from '../components/Brand';
 import useAuth from '../hooks/useAuth';
 
 export default function Login() {
   const [showSignUpForm, setShowSignUpForm] = useState(false);
+  const [error, setError] = useState('')
   const auth = useAuth();
 
   const onGotoSignUpClick = (ev: any) => {
@@ -20,7 +21,15 @@ export default function Login() {
   const onLogin = () => {
     const username = (document.getElementById('signin-username') as HTMLInputElement)?.value
     const password = (document.getElementById('signin-password') as HTMLInputElement)?.value
-    auth.signIn({ username, password });
+    auth.signIn({ username, password }).catch(error => {
+      const errorMessage = error.response?.data as string
+      if (errorMessage) {
+        setError(errorMessage)
+      }
+      else {
+        setError('There was an error while loading the devices list. Ensure the server is up.')
+      }
+    })
   }
 
   return <>
@@ -28,6 +37,7 @@ export default function Login() {
       <Card sx={{ width: 1, mx: 2, maxWidth: 340, height: 500, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
         <CardHeader title={<Brand />} sx={{ textAlign: 'center', mt: 2 }}></CardHeader>
         <CardContent>
+          {error ? <Alert severity="warning" sx={{ mb: 2 }}>{error}</Alert> : null}
           <FormControl fullWidth sx={{ mb: 2 }}>
             {
               showSignUpForm ?

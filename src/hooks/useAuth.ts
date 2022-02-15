@@ -37,18 +37,11 @@ export default function useAuth() {
   return {
     token,
     user,
-    signIn: (signInForm: SignInForm) => {
-      signIn(signInForm).then(signInResult => {
-        if (signInResult.failed) {
-          // TODO deal with error
-        }
-        else {
-          const token = signInResult.payload
-          setToken(token)
-          // TODO fetch user data and call setUser()
-          window.location.reload()
-        }
-      })
+    signIn: async (signInForm: SignInForm) => {
+      const token = await signIn(signInForm)
+      setToken(token)
+      // TODO fetch user data and call setUser()
+      window.location.reload()
     },
     signUp: ({ username, password, passwordAgain }: SignUpForm) => {
 
