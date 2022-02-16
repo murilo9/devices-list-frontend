@@ -1,5 +1,4 @@
-import MenuIcon from '@mui/icons-material/Menu';
-import { Alert, Box, Button, Modal } from '@mui/material';
+import { Alert, Box } from '@mui/material';
 import react, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import getDevicesList from '../requests/getDevicesLIst';
@@ -8,8 +7,8 @@ import DevicesList from '../components/DevicesLIst';
 import ItemModal from '../components/ItemModal';
 import TopBar from '../components/TopBar';
 import { AppState } from '../store/initialState';
-import { setDevicesList } from '../store/rootSlice';
-import Device from '../types/Device';
+import { setCart, setDevicesList } from '../store/rootSlice';
+import loadCart from '../utils/loadCart';
 
 export default function Main() {
   const [loadingDevices, setLoadingDevices] = useState(true);
@@ -19,7 +18,6 @@ export default function Main() {
 
   const dispatch = useDispatch();
   const devices = useSelector((state: AppState) => state.devicesList)
-  const state = useSelector((state: AppState) => state)
 
   const handleOnDeviceItemClick = (index: number) => {
     setSelectedDeviceIndex(index)
@@ -33,7 +31,7 @@ export default function Main() {
       dispatch(setDevicesList(devices))
     })
       .catch(error => {
-        setError('There was an error while loading the devices list. Ensure the server is up.');
+        setError('There was an error while loading the devices list. Make sure the server is up.');
       })
       .finally(() => {
         setLoadingDevices(false);
@@ -41,23 +39,27 @@ export default function Main() {
   }
 
   useEffect(() => {
-    loadDevices();
+    loadDevices()
+    loadCart(dispatch, setCart, setError)
   }, [])
 
   return <>
     <Box sx={{ flexGrow: 1, bgcolor: 'rgb(231, 235, 240)', height: '100vh', overflowY: 'auto' }}>
       <TopBar />
       <Box sx={{ padding: 3, paddingTop: 10 }}>
-        {error ? <Alert color="warning">{error}</Alert> : null}
-        <DevicesList loading={loadingDevices}>
-          {devices.map((device, index) =>
-            <DeviceItem
-              device={device}
-              key={device._id}
-              index={index}
-              onDeviceItemClick={handleOnDeviceItemClick}
-            />)}
-        </DevicesList>
+        {error ? <Alert severity="warning">{error}</Alert> : null}
+        {
+          error ? null :
+            <DevicesList loading={loadingDevices}>
+              {devices.map((device, index) =>
+                <DeviceItem
+                  device={device}
+                  key={device._id}
+                  index={index}
+                  onDeviceItemClick={handleOnDeviceItemClick}
+                />)}
+            </DevicesList>
+        }
       </Box>
       {
         devices.length ?

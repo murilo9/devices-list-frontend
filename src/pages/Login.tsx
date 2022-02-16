@@ -27,7 +27,7 @@ export default function Login() {
         setError(errorMessage)
       }
       else {
-        setError('There was an error while loading the devices list. Ensure the server is up.')
+        setError('There was an error while loading the devices list. Make sure the server is up.')
       }
     })
   }

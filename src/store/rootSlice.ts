@@ -8,6 +8,6 @@ export const rootSlice = createSlice({
   reducers
 })
 
-export const { addItemToCart, removeItemFromCart, clearCart, setDevicesList } = rootSlice.actions;
+export const { addItemToCart, removeItemFromCart, clearCart, setDevicesList, setCart } = rootSlice.actions;
 
 export default rootSlice.reducer;

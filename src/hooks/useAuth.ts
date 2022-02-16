@@ -9,7 +9,7 @@ type SignInForm = {
 }
 
 export default function useAuth() {
-  const token = localStorage.getItem('token')
+  const token = localStorage.getItem('token') || ''
 
   const user = {
     username: localStorage.getItem('username'),

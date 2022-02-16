@@ -1,8 +1,9 @@
-import axios, { AxiosResponse } from 'axios';
-import { request } from 'http';
+import axios from 'axios';
+
+const token = localStorage.getItem('token') || ''
 
 const headers = {
-  'x-access-token': ''
+  'x-access-token': token
 }
 
 const get = async function <T>(url: string, params?: { [key: string]: any }): Promise<T> {

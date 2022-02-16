@@ -1,11 +1,14 @@
-import { Box, Button, Card, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Divider, Grid, IconButton, TextField, Typography } from '@mui/material';
-import react, { ChangeEvent, useState } from 'react';
+import { Alert, Box, Button, Card, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Divider, Grid, IconButton, TextField, Typography } from '@mui/material';
+import react, { ChangeEvent, useEffect, useRef, useState } from 'react';
 import Device from '../types/Device';
 import CloseIcon from '@mui/icons-material/Close';
 import { AppState } from '../store/initialState';
 import { useDispatch, useSelector } from 'react-redux';
-import { addItemToCart, removeItemFromCart } from '../store/rootSlice';
+import { addItemToCart, removeItemFromCart, setCart } from '../store/rootSlice';
 import useTotalItemsInCart from '../hooks/useTotalItemsInCart';
+import saveCart from '../requests/saveCart';
+import DeviceInCart from '../types/DeviceInCart';
+import loadCart from '../utils/loadCart';
 
 type ItemModalProps = {
   showItemModal: boolean,
@@ -15,24 +18,46 @@ type ItemModalProps = {
 
 export default function ItemModal({ showItemModal, device, setShowItemModal }: ItemModalProps) {
   const dispatch = useDispatch();
+  const cart = useSelector((state: AppState) => state.cart)
 
-  const [amount, setAmount] = useState(0);
-  const [error, setError] = useState('');
+  const [amount, setAmount] = useState(0)
+  const [amountError, setAmountError] = useState('')
+  const [saving, setSaving] = useState(false);
+  const [saveError, setSaveError] = useState('')
 
   const onAmountChange = (event: ChangeEvent<HTMLInputElement>) => {
     const numberValue = Number(event.currentTarget.value)
     if (isNaN(numberValue)) {
-      setError('Must input a valid amount')
+      setAmountError('Must input a valid amount')
     }
     else {
-      setError('')
+      setAmountError('')
       setAmount(numberValue)
     }
   }
 
-  const handleItemModalClose = () => {
+  const handleModalClose = () => {
+    // Reset component state
     setShowItemModal(false)
     setAmount(0)
+    setAmountError('')
+    setSaveError('')
+    // Reload cart
+    loadCart(dispatch, setCart)
+  }
+
+  const handleSaveClick = () => {
+    setSaving(true)
+    saveCart(cart)
+      .then((response: DeviceInCart[]) => {
+        handleModalClose()
+      })
+      .catch(error => {
+        setSaveError('There was a problem while saving the cart data. Please try again.')
+      })
+      .finally(() => {
+        setSaving(false)
+      })
   }
   const handleAddItemToCart = () => {
     dispatch(addItemToCart({ item: device, amount }))
@@ -47,7 +72,7 @@ export default function ItemModal({ showItemModal, device, setShowItemModal }: I
   return <>
     <Dialog
       open={showItemModal}
-      onClose={handleItemModalClose}
+      onClose={handleModalClose}
       aria-labelledby="alert-dialog-title"
       aria-describedby="alert-dialog-description"
       maxWidth="lg"
@@ -55,11 +80,12 @@ export default function ItemModal({ showItemModal, device, setShowItemModal }: I
       <DialogTitle id="alert-dialog-title" sx={{ borderBottom: '1px solid #DDDDDD' }}>
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <Typography variant="h6">{device.name}</Typography>
-          <IconButton onClick={handleItemModalClose}>
+          <IconButton onClick={handleModalClose}>
             <CloseIcon />
           </IconButton>
         </Box>
       </DialogTitle>
+      {saveError ? <Alert severity="warning">{saveError}</Alert> : null}
       <DialogContent sx={{ my: 3 }}>
         <Grid container sx={{ width: 560, pt: 1, maxWidth: 1 }}>
           <Grid item xs={12} sm={7}>
@@ -72,7 +98,16 @@ export default function ItemModal({ showItemModal, device, setShowItemModal }: I
           </Grid>
           <Divider orientation="vertical" flexItem sx={{ mx: 2, display: { xs: 'none', sm: 'initial' } }}></Divider>
           <Grid item xs={12} sm={4} sx={{ mt: { xs: 3, sm: 0 } }}>
-            <TextField size="small" label="Amount" sx={{ mb: 1, width: 1 }} value={amount} onChange={onAmountChange} error={!!error} helperText={error} />
+            <TextField
+              size="small"
+              label="Amount"
+              sx={{ mb: 1, width: 1 }}
+              value={amount}
+              onChange={onAmountChange}
+              error={!!amountError}
+              helperText={amountError}
+              disabled={saving}
+            />
             <Button fullWidth sx={{ mb: 1 }} variant="outlined" onClick={handleAddItemToCart}>
               Add to cart
               </Button>
@@ -86,8 +121,11 @@ export default function ItemModal({ showItemModal, device, setShowItemModal }: I
         </Grid>
       </DialogContent>
       <DialogActions sx={{ borderTop: '1px solid #DDDDDD' }}>
-        <Button onClick={handleItemModalClose}>
-          Done
+        <Button onClick={handleModalClose} disabled={saving} color="error">
+          Cancel
+        </Button>
+        <Button onClick={handleSaveClick} disabled={saving}>
+          {saving ? 'Saving...' : 'Save'}
         </Button>
       </DialogActions>
     </Dialog>
