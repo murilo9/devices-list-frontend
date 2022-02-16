@@ -8,7 +8,7 @@ import { addItemToCart, removeItemFromCart, setCart } from '../store/rootSlice';
 import useTotalItemsInCart from '../hooks/useTotalItemsInCart';
 import saveCart from '../requests/saveCart';
 import DeviceInCart from '../types/DeviceInCart';
-import loadCart from '../utils/loadCart';
+import reloadCart from '../utils/loadCart';
 
 type ItemModalProps = {
   showItemModal: boolean,
@@ -36,29 +36,37 @@ export default function ItemModal({ showItemModal, device, setShowItemModal }: I
     }
   }
 
-  const handleModalClose = () => {
-    // Reset component state
+  const resetModalState = () => {
     setShowItemModal(false)
     setAmount(0)
     setAmountError('')
     setSaveError('')
-    // Reload cart
-    loadCart(dispatch, setCart)
   }
 
-  const handleSaveClick = () => {
+  // Closes the modal, saving cart data to the server
+  const closeSaving = () => {
     setSaving(true)
     saveCart(cart)
       .then((response: DeviceInCart[]) => {
-        handleModalClose()
+        resetModalState()
+        setShowItemModal(false)
       })
       .catch(error => {
         setSaveError('There was a problem while saving the cart data. Please try again.')
       })
       .finally(() => {
         setSaving(false)
+        reloadCart(dispatch, setCart)
       })
   }
+
+  // Closes the modal, without saving cart data to the server. Changes made to cart will not be applied.
+  const closeWithoutSaving = () => {
+    resetModalState()
+    setShowItemModal(false)
+    reloadCart(dispatch, setCart, setSaveError)
+  }
+
   const handleAddItemToCart = () => {
     dispatch(addItemToCart({ item: device, amount }))
   }
@@ -72,7 +80,7 @@ export default function ItemModal({ showItemModal, device, setShowItemModal }: I
   return <>
     <Dialog
       open={showItemModal}
-      onClose={handleModalClose}
+      onClose={closeSaving}
       aria-labelledby="alert-dialog-title"
       aria-describedby="alert-dialog-description"
       maxWidth="lg"
@@ -80,7 +88,7 @@ export default function ItemModal({ showItemModal, device, setShowItemModal }: I
       <DialogTitle id="alert-dialog-title" sx={{ borderBottom: '1px solid #DDDDDD' }}>
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <Typography variant="h6">{device.name}</Typography>
-          <IconButton onClick={handleModalClose}>
+          <IconButton onClick={closeSaving}>
             <CloseIcon />
           </IconButton>
         </Box>
@@ -121,11 +129,11 @@ export default function ItemModal({ showItemModal, device, setShowItemModal }: I
         </Grid>
       </DialogContent>
       <DialogActions sx={{ borderTop: '1px solid #DDDDDD' }}>
-        <Button onClick={handleModalClose} disabled={saving} color="error">
+        <Button onClick={closeWithoutSaving} disabled={saving} color="error">
           Cancel
         </Button>
-        <Button onClick={handleSaveClick} disabled={saving}>
-          {saving ? 'Saving...' : 'Save'}
+        <Button onClick={closeSaving} disabled={saving}>
+          {saving ? 'Saving...' : 'Done'}
         </Button>
       </DialogActions>
     </Dialog>
