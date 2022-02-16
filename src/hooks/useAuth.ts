@@ -43,9 +43,6 @@ export default function useAuth() {
       // TODO fetch user data and call setUser()
       window.location.reload()
     },
-    signUp: ({ username, password, passwordAgain }: SignUpForm) => {
-
-    },
     signOut: () => {
       clearToken()
       clearUser()
