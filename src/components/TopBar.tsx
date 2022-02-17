@@ -3,7 +3,12 @@ import { AppBar, Box, Button, IconButton, Toolbar, Typography } from '@mui/mater
 import useAuth from '../hooks/useAuth';
 
 export default function TopBar() {
-  const auth = useAuth();
+  const auth = useAuth()
+
+  const signOut = () => {
+    auth.signOut()
+    window.location.reload()
+  };
 
   return <>
     <AppBar position="fixed">
@@ -14,7 +19,7 @@ export default function TopBar() {
         <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
           Devices List
           </Typography>
-        <Button color="inherit" onClick={auth.signOut}>Logout</Button>
+        <Button color="inherit" onClick={signOut}>Logout</Button>
       </Toolbar>
     </AppBar>
   </>

@@ -12,13 +12,13 @@ import useAuth from './hooks/useAuth';
 
 function App() {
 
-  const auth = useAuth();
+  const token = useAuth().getToken()
 
   return <>
     <BrowserRouter>
       <Routes>
         {
-          auth.token ?
+          token ?
             <>
               <Route index element={<Main />}></Route>
               <Route path="*" element={<Navigate to="/" />} />

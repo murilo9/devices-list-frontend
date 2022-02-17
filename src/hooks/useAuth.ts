@@ -1,7 +1,4 @@
-import { useState } from "react";
 import signIn from "../requests/signIn";
-import SignUpForm from "../types/SignUpForm";
-import User from "../types/User";
 
 type SignInForm = {
   username: string,
@@ -9,44 +6,28 @@ type SignInForm = {
 }
 
 export default function useAuth() {
-  const token = localStorage.getItem('token') || ''
+  const getToken = () => localStorage.getItem('token') || ''
 
-  const user = {
-    username: localStorage.getItem('username'),
-    _id: localStorage.getItem('userId')
-  }
-
-  const setToken = (token: string) => {
-    localStorage.setItem('token', token)
-  }
-
-  const clearToken = () => {
-    localStorage.setItem('token', '')
-  }
-
-  const setUser = (username: string, userId: string) => {
-    localStorage.setItem('username', username)
-    localStorage.setItem('userId', userId)
-  }
-
-  const clearUser = () => {
-    localStorage.setItem('username', '')
-    localStorage.setItem('userId', '')
-  }
+  const getUser = () => ({
+    username: localStorage.getItem('username') || '',
+    userId: localStorage.getItem('userId') || ''
+  })
 
   return {
-    token,
-    user,
+    getToken,
+    getUser,
     signIn: async (signInForm: SignInForm) => {
-      const token = await signIn(signInForm)
-      setToken(token)
+      const signInResponse = await signIn(signInForm)
+      const { token, userId, username } = signInResponse
+      localStorage.setItem('token', token)
+      localStorage.setItem('username', username)
+      localStorage.setItem('userId', userId)
       // TODO fetch user data and call setUser()
-      window.location.reload()
     },
     signOut: () => {
-      clearToken()
-      clearUser()
-      window.location.reload()
+      localStorage.setItem('token', '')
+      localStorage.setItem('username', '')
+      localStorage.setItem('userId', '')
     }
   }
 }

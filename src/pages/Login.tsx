@@ -13,7 +13,6 @@ export default function Login() {
   const clearMessages = () => {
     setError('')
     setInfo('')
-
   }
 
   const onGotoSignUpClick = (ev: any) => {
@@ -31,11 +30,15 @@ export default function Login() {
   const onLogin = () => {
     const username = (document.getElementById('signin-username') as HTMLInputElement)?.value
     const password = (document.getElementById('signin-password') as HTMLInputElement)?.value
-    auth.signIn({ username, password }).catch(error => {
-      const errorMessage = error.response?.data as string || 'There was an error while loading the devices list. Make sure the server is up.'
-      clearMessages()
-      setError(errorMessage)
-    })
+    auth.signIn({ username, password })
+      .then(() => {
+        window.location.reload()
+      })
+      .catch(error => {
+        const errorMessage = error.response?.data as string || 'There was an error while loading the devices list. Make sure the server is up.'
+        clearMessages()
+        setError(errorMessage)
+      })
   }
 
   const onSignUp = () => {

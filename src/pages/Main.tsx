@@ -9,12 +9,16 @@ import TopBar from '../components/TopBar';
 import { AppState } from '../store/initialState';
 import { setCart, setDevicesList } from '../store/rootSlice';
 import loadCart from '../utils/loadCart';
+import useAuth from '../hooks/useAuth';
+import Salut from '../components/Salut';
 
 export default function Main() {
   const [loadingDevices, setLoadingDevices] = useState(true);
   const [error, setError] = useState('');
   const [showItemModal, setShowItemModal] = useState(false);
   const [selectedDeviceIndex, setSelectedDeviceIndex] = useState(-1);
+
+  const { username, userId } = useAuth().getUser()
 
   const dispatch = useDispatch();
   const devices = useSelector((state: AppState) => state.devicesList)
@@ -47,6 +51,7 @@ export default function Main() {
     <Box sx={{ flexGrow: 1, bgcolor: 'rgb(231, 235, 240)', height: '100vh', overflowY: 'auto' }}>
       <TopBar />
       <Box sx={{ padding: 3, paddingTop: 10 }}>
+        <Salut username={username} />
         {error ? <Alert severity="warning">{error}</Alert> : null}
         {
           error ? null :
