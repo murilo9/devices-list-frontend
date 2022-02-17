@@ -9,6 +9,9 @@ import useTotalItemsInCart from '../hooks/useTotalItemsInCart';
 import saveCart from '../requests/saveCart';
 import DeviceInCart from '../types/DeviceInCart';
 import reloadCart from '../utils/loadCart';
+import parseCartChangedChannelMessage from '../utils/parseCartChangedChannelMessage';
+import buildCartChangedChannelMessage from '../utils/buildCartChangedChannelMessage';
+import CartChangedMessageParams from '../types/CartChangedMessageParams';
 
 type ItemModalProps = {
   showItemModal: boolean,
@@ -24,6 +27,33 @@ export default function ItemModal({ showItemModal, device, setShowItemModal }: I
   const [amountError, setAmountError] = useState('')
   const [saving, setSaving] = useState(false);
   const [saveError, setSaveError] = useState('')
+
+  const devices = useSelector((state: AppState) => state.devicesList)
+  const channelRef = useRef(new BroadcastChannel("cart"));
+  const channel = channelRef.current;
+
+  const sendChannelMessage = ({ deviceId, amount }: CartChangedMessageParams) => {
+    const message = buildCartChangedChannelMessage({ deviceId, amount })
+    try {
+      channel.postMessage(message)
+    }
+    catch (error) {
+      console.log(error)
+    }
+  }
+
+  useEffect(() => {
+    channel.onmessage = ev => {
+      reloadCart(dispatch, setCart)
+      const messageString = ev.data
+      const message = parseCartChangedChannelMessage(messageString, devices)
+      alert(message)
+    };
+
+    return () => {
+      channel.close();
+    };
+  }, [channel])
 
   const onAmountChange = (event: ChangeEvent<HTMLInputElement>) => {
     const numberValue = Number(event.currentTarget.value)
@@ -48,6 +78,7 @@ export default function ItemModal({ showItemModal, device, setShowItemModal }: I
     setSaving(true)
     saveCart(cart)
       .then((response: DeviceInCart[]) => {
+        sendChannelMessage({ deviceId: device._id, amount })
         resetModalState()
         setShowItemModal(false)
       })
