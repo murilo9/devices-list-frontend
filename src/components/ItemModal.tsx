@@ -12,6 +12,8 @@ import reloadCart from '../utils/loadCart';
 import parseCartChangedChannelMessage from '../utils/parseCartChangedChannelMessage';
 import buildCartChangedChannelMessage from '../utils/buildCartChangedChannelMessage';
 import CartChangedMessageParams from '../types/CartChangedMessageParams';
+import useAuth from '../hooks/useAuth';
+import messageBelongsToUser from '../utils/messageBelongsToUser';
 
 type ItemModalProps = {
   showItemModal: boolean,
@@ -22,6 +24,7 @@ type ItemModalProps = {
 export default function ItemModal({ showItemModal, device, setShowItemModal }: ItemModalProps) {
   const dispatch = useDispatch();
   const cart = useSelector((state: AppState) => state.cart)
+  const userId = useAuth().getUser().userId
 
   const [amount, setAmount] = useState(0)
   const [amountError, setAmountError] = useState('')
@@ -33,7 +36,8 @@ export default function ItemModal({ showItemModal, device, setShowItemModal }: I
   const channel = channelRef.current;
 
   const sendChannelMessage = ({ deviceId, amount }: CartChangedMessageParams) => {
-    const message = buildCartChangedChannelMessage({ deviceId, amount })
+
+    const message = buildCartChangedChannelMessage({ userId, deviceId, amount })
     try {
       channel.postMessage(message)
     }
@@ -46,8 +50,10 @@ export default function ItemModal({ showItemModal, device, setShowItemModal }: I
     channel.onmessage = ev => {
       reloadCart(dispatch, setCart)
       const messageString = ev.data
-      const message = parseCartChangedChannelMessage(messageString, devices)
-      alert(message)
+      if (messageBelongsToUser(messageString, userId)) {
+        const message = parseCartChangedChannelMessage(messageString, devices)
+        alert(message)
+      }
     };
 
     return () => {
@@ -78,7 +84,7 @@ export default function ItemModal({ showItemModal, device, setShowItemModal }: I
     setSaving(true)
     saveCart(cart)
       .then((response: DeviceInCart[]) => {
-        sendChannelMessage({ deviceId: device._id, amount })
+        sendChannelMessage({ userId, deviceId: device._id, amount })
         resetModalState()
         setShowItemModal(false)
       })

@@ -1,6 +1,7 @@
 type CartChangedMessageParams = {
+  userId: string,
   deviceId: string,
-  amount: number
+  amount: number,
 }
 
 export default CartChangedMessageParams
