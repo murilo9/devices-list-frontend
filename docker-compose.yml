@@ -2,13 +2,13 @@ version: '3.7'
 services:
   app:
     container_name: devices-list-app
+    image: murilo9/devices-list-app
     build:
       context: .
       dockerfile: Dockerfile
+    restart: always
     volumes:
       - '.:/app'
       - '/app/node_modules'
     ports:
-      - '3001:3000'
-    environment:
-      - NODE_ENV=development
+      - '3000:3000'
