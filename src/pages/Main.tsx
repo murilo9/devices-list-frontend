@@ -18,16 +18,18 @@ export default function Main() {
   const [showItemModal, setShowItemModal] = useState(false);
   const [selectedDeviceIndex, setSelectedDeviceIndex] = useState(-1);
 
-  const { username, userId } = useAuth().getUser()
+  const { username } = useAuth().getUser()
 
   const dispatch = useDispatch();
   const devices = useSelector((state: AppState) => state.devicesList)
 
+  // Opens the device modal on item click
   const handleOnDeviceItemClick = (index: number) => {
     setSelectedDeviceIndex(index)
     setShowItemModal(true)
   }
 
+  // Loads the registered devices list
   const loadDevices = () => {
     getDevicesList().then(response => {
       const devices = response
@@ -42,6 +44,7 @@ export default function Main() {
       })
   }
 
+  // Loads page data (devices list and user cart) after page is mounted
   useEffect(() => {
     loadDevices()
     loadCart(dispatch, setCart, setError)

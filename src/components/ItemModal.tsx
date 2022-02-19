@@ -35,8 +35,8 @@ export default function ItemModal({ showItemModal, device, setShowItemModal }: I
   const channelRef = useRef(new BroadcastChannel("cart"));
   const channel = channelRef.current;
 
+  // Sends message to other tabs when cart changes
   const sendChannelMessage = ({ deviceId, amount }: CartChangedMessageParams) => {
-
     const message = buildCartChangedChannelMessage({ userId, deviceId, amount })
     try {
       channel.postMessage(message)
@@ -46,6 +46,7 @@ export default function ItemModal({ showItemModal, device, setShowItemModal }: I
     }
   }
 
+  // Catches messages sent from another tabs
   useEffect(() => {
     channel.onmessage = ev => {
       reloadCart(dispatch, setCart)
@@ -61,6 +62,7 @@ export default function ItemModal({ showItemModal, device, setShowItemModal }: I
     };
   }, [channel])
 
+  // Validates changes on amount value
   const onAmountChange = (event: ChangeEvent<HTMLInputElement>) => {
     const numberValue = Number(event.currentTarget.value)
     if (isNaN(numberValue)) {

@@ -1,3 +1,7 @@
+/**
+ * This module offers a simplified API for making HTTP requests to the server.
+ */
+
 import axios from 'axios';
 
 const token = localStorage.getItem('token') || ''

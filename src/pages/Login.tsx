@@ -15,18 +15,21 @@ export default function Login() {
     setInfo('')
   }
 
+  // Shows the sign up form
   const onGotoSignUpClick = (ev: any) => {
     ev.preventDefault()
     setShowSignUpForm(true)
     clearMessages()
   }
 
+  // Shows the login form
   const onGotoLoginClick = (ev: any) => {
     ev.preventDefault()
     setShowSignUpForm(false)
     clearMessages()
   }
 
+  // Try to sign in. Reloads page on success. Shows error on failure.
   const onLogin = () => {
     const username = (document.getElementById('signin-username') as HTMLInputElement)?.value
     const password = (document.getElementById('signin-password') as HTMLInputElement)?.value
@@ -41,6 +44,7 @@ export default function Login() {
       })
   }
 
+  // Try to sign up. Reloads page on success. Shows error on failure.
   const onSignUp = () => {
     const username = (document.getElementById('signup-username') as HTMLInputElement)?.value
     const password = (document.getElementById('signup-password') as HTMLInputElement)?.value

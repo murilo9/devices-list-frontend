@@ -5,6 +5,9 @@ type SignInForm = {
   password: string
 }
 
+/**
+ * This hook offers an API to easly signing-in/out and getting session data.
+ */
 export default function useAuth() {
   const getToken = () => localStorage.getItem('token') || ''
 
